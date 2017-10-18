@@ -32,7 +32,7 @@ class articlesController extends Controller
         $current_date = Carbon::now();
         
         $current_date = $current_date->toDateString();
-        $articles = Article::where('datum', '>=',  $current_date)->get();
+        $articles = Article::where('datum', '>=',  $current_date)->limit(4)->get();
         
         $categories = Category::all();
         return view('Articles.index')->withArticles($articles)->withCategories($categories);
@@ -98,16 +98,9 @@ class articlesController extends Controller
     * @param  \Illuminate\Http\Request  $request
     * @return \Illuminate\Http\Response
     */
-    public function store(ArticleRequest $request)
+    public function store(CreateRequest $request)
     {
-        $this->validate($request, array(
-        'title'         => 'required|max:255',
-        'datum'         => 'required',
-        'category_id'   => 'required|integer',
-        'text'          => 'required',
-        'locatie'       => 'required',
-        'tijdstip'      => 'required'
-        ));
+    
         
         $articles = new Article();
         if ($request->hasFile('pic')) {
@@ -171,39 +164,21 @@ class articlesController extends Controller
     * @param  int  $id
     * @return \Illuminate\Http\Response
     */
-    public function update(ArticleRequest $request, $id)
+    public function update(EditRequest $request, $id)
     {
+
+            
+        
         $articles = Article::find($id);
         if($request->hasFile('pic')){
-            $this->validate($request, array(
-                'pic' =>'image|mimes:jpeg,png,jpg,gif',
-                'title' => 'required|max:225',
-                'category_id'   => 'required|integer',
-                'text' => 'required',
-                'locatie'       => 'required',
-                'tijdstip'      => 'required'
-                ));
-                $pic = $request->file('pic');
-                $fileName = time() . '.'.$pic->getClientOriginalExtension();
-                // 'images/cars/' . $filename;
-                if(Image::make($pic)->save(public_path('images/'.$fileName))){
-                    $articles->pic = $fileName;
-                }
-        }else{
-            $this->validate($request, array(
-               
-                'title' => 'required|max:225',
-                'category_id'   => 'required|integer',
-                'text' => 'required',
-                'locatie'       => 'required',
-                'tijdstip'      => 'required'
-                ));
-                $fileName = $request->pic;
+            $pic = $request->file('pic');
+            $fileName = time() . '.'.$pic->getClientOriginalExtension();
+            // 'images/cars/' . $filename;
+            if(Image::make($pic)->save(public_path('images/'.$fileName))){
+                $articles->pic = $fileName;
+            }
         }
         
-        
-       
-                
         $articles->title = $request->title;
         $articles->datum = $request->datum;
         $articles->locatie = $request->locatie;
