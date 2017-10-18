@@ -12,7 +12,8 @@ use Image;
 use App\Article;
 use App\Category;
 use App\User;
-use App\Http\Requests\ArticleRequest;
+use App\Http\Requests\CreateRequest;
+use App\Http\Requests\EditRequest;
 use Carbon\Carbon;
 class articlesController extends Controller
 {
